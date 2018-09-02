@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="VerificationCodeInputBox">
+        <!-- 输入框类型，line：横线、square：方框 -->
+        <attr name="boxStyle">
+            <flag name="line" value="0" />
+            <flag name="square" value="1" />
+        </attr>
+
+        <!-- 输入框正常时的颜色 -->
+        <attr name="boxNormalColor" format="color" />
+
+        <!-- 输入框选中时的颜色 -->
+        <attr name="boxPressColor" format="color" />
+
+        <!-- 验证码数字颜色 -->
+        <attr name="boxTextColor" format="color" />
+
+        <!-- 验证码数字大小 -->
+        <attr name="boxTextSize" format="dimension" />
+
+        <!-- 输入框线条宽度 -->
+        <attr name="boxLineWidth" format="dimension" />
+
+        <!-- 输入框圆角半径 -->
+        <attr name="boxRoundRadius" format="dimension" />
+
+        <!-- 输入框宽度（高度） -->
+        <attr name="boxItemWidth" format="dimension" />
+
+        <!-- 输入框之间的间隔 -->
+        <attr name="boxSpaceWidth" format="dimension" />
+
+        <!-- 输入框数量 -->
+        <attr name="boxCount" format="integer" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="defBoxTextSize">24sp</dimen>
+    <dimen name="defBoxLineWidth">2dp</dimen>
+    <dimen name="defBoxItemWidth">40dp</dimen>
+    <dimen name="defBoxSpaceWidth">16dp</dimen>
+</resources>
