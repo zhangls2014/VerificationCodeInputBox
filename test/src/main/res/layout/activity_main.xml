@@ -9,11 +9,10 @@
     <com.zhangls.android.verification.VerificationCodeInputBox
         android:id="@+id/inputBox"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:boxCount="4"
+        android:layout_height="50dp"
+        app:boxCount="6"
         app:boxNormalColor="@color/colorPrimary"
         app:boxPressColor="@color/colorAccent"
-        app:boxRoundRadius="4dp"
         app:boxStyle="square"
         app:boxTextColor="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
