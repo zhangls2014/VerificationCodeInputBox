@@ -1,4 +1,4 @@
-package com.zhangls.android.verification
+﻿package com.zhangls.android.verification
 
 import android.content.Context
 import android.graphics.Canvas
@@ -159,6 +159,8 @@ class VerificationCodeInputBox : AppCompatEditText {
         setOnClickListener { setSelection(text!!.length) }
         isLongClickable = false
         setTextIsSelectable(false)
+        // 设置最大字符数
+        filters = arrayOf(InputFilter.LengthFilter(mBoxCount))
         addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
