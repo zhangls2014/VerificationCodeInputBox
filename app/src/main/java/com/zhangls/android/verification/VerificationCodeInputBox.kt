@@ -244,11 +244,11 @@ class VerificationCodeInputBox : AppCompatEditText {
    */
   override fun onDraw(canvas: Canvas?) {
     super.onDraw(canvas)
-    // 确定四个边距的位置
+    // 确定四个边距的位置,STROKE 的坐标只是绘制线的中心坐标，所以需要预留足够的位置
     val realLeft = paddingLeft
     val realRight = width - paddingRight
-    val realTop = paddingTop
-    val realBottom = (height - paddingBottom)
+    val realTop = paddingTop + mLineWidth / 2F
+    val realBottom = height - paddingBottom -  + mLineWidth / 2F
 
     // 根据显示的位置来确定左边距
     val gapWidth = realRight - realLeft - (mItemWidth + mSpaceWidth) * mBoxCount + mSpaceWidth
@@ -263,16 +263,23 @@ class VerificationCodeInputBox : AppCompatEditText {
     val currentInputTextLen = mCurrentInputText.length
 
     for (index in 0 until mBoxCount) {
-      val left = leftWidth + realLeft + (mItemWidth + mSpaceWidth) * index.toFloat()
-      val right = left + mItemWidth
-
       val mPaint = if (index < currentInputTextLen) mPressPaint else mNormalPaint
-
       when (mBoxStyle) {
-        STYLE_LINE -> canvas?.drawLine(left, realBottom.toFloat(), right, realBottom.toFloat(), mPaint)
+        STYLE_LINE -> {
+          val left = leftWidth + realLeft + (mItemWidth + mSpaceWidth) * index.toFloat()
+          val right = left + mItemWidth
+          canvas?.drawLine(left, realBottom, right, realBottom, mPaint)
+        }
         STYLE_SQUARE -> {
-          canvas?.drawRoundRect(left, realTop.toFloat(), right, realBottom.toFloat(),
-              mRoundRadius.toFloat(), mRoundRadius.toFloat(), mPaint)
+          val left = leftWidth + realLeft + (mItemWidth + mSpaceWidth) * index + mLineWidth / 2F
+          val right = left + mItemWidth - mLineWidth
+          canvas?.drawRoundRect(left,
+              realTop,
+              right,
+              realBottom,
+              mRoundRadius.toFloat(),
+              mRoundRadius.toFloat(),
+              mPaint)
         }
       }
 
