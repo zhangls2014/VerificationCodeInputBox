@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RectF
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.AppCompatEditText
 import android.text.Editable
@@ -90,10 +89,6 @@ class VerificationCodeInputBox : AppCompatEditText {
    * 数字画笔
    */
   private lateinit var mTextPaint: Paint
-  /**
-   * 用于绘制圆角矩形
-   */
-  private var mRectF = RectF()
 
 
   companion object {
@@ -238,7 +233,7 @@ class VerificationCodeInputBox : AppCompatEditText {
     if (heightMode == MeasureSpec.AT_MOST) {
       mRawHeight = mItemWidth
       heightSize = mRawHeight + paddingTop + paddingBottom
-    } else {
+    } else if (heightMode == MeasureSpec.EXACTLY) {
       mRawHeight = heightSize - paddingTop - paddingBottom
     }
     setMeasuredDimension(widthSize, heightSize)
@@ -276,12 +271,8 @@ class VerificationCodeInputBox : AppCompatEditText {
       when (mBoxStyle) {
         STYLE_LINE -> canvas?.drawLine(left, realBottom.toFloat(), right, realBottom.toFloat(), mPaint)
         STYLE_SQUARE -> {
-          mRectF.left = left
-          mRectF.top = realTop.toFloat()
-          mRectF.right = right
-          mRectF.bottom = realBottom.toFloat()
-
-          canvas?.drawRoundRect(mRectF, mRoundRadius.toFloat(), mRoundRadius.toFloat(), mPaint)
+          canvas?.drawRoundRect(left, realTop.toFloat(), right, realBottom.toFloat(),
+              mRoundRadius.toFloat(), mRoundRadius.toFloat(), mPaint)
         }
       }
 
