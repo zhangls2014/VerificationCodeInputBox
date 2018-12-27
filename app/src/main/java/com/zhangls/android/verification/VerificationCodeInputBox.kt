@@ -4,14 +4,14 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.AppCompatEditText
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.View
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.content.ContextCompat
 
 
 /**
@@ -64,15 +64,11 @@ class VerificationCodeInputBox : AppCompatEditText {
   /**
    * 输入完成后回调接口
    */
-  var onInputComplete: (String) -> Unit = { _ -> }
+  var onInputComplete: (String) -> Unit = { }
   /**
-   * 原始宽度（不受影响时的宽度）
+   * 输入框高度
    */
-  private var mRawWidth = 0
-  /**
-   * 原始高度（不受影响时的高度）
-   */
-  private var mRawHeight = 0
+  private var mItemHeight = 0
   /**
    * 当前输入的文本
    */
@@ -100,42 +96,59 @@ class VerificationCodeInputBox : AppCompatEditText {
     private const val BOX_COUNT = 6
   }
 
-  constructor(context: Context) : super(context) {
-    initBoxView(context)
-  }
+  constructor(context: Context) : this(context, null)
 
-  constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-    initBoxView(context, attrs)
-  }
+  constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-  constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+  constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    context,
+    attrs,
+    defStyleAttr
+  ) {
     initBoxView(context, attrs, defStyleAttr)
   }
 
   /**
    * 初始化组建配置，读取属性值
    */
-  private fun initBoxView(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) {
+  private fun initBoxView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) {
     // 读取属性值
-    val typedArray = context.obtainStyledAttributes(attrs, R.styleable.VerificationCodeInputBox, defStyleAttr, 0)
+    val typedArray =
+      context.obtainStyledAttributes(attrs, R.styleable.VerificationCodeInputBox, defStyleAttr, 0)
 
     mBoxStyle = typedArray.getInt(R.styleable.VerificationCodeInputBox_boxStyle, mBoxStyle)
     mBoxCount = typedArray.getInt(R.styleable.VerificationCodeInputBox_boxCount, mBoxCount)
 
-    mNormalBgColor = typedArray.getColor(R.styleable.VerificationCodeInputBox_boxNormalColor, mNormalBgColor)
-    mPressBgColor = typedArray.getColor(R.styleable.VerificationCodeInputBox_boxPressColor, mPressBgColor)
+    mNormalBgColor =
+        typedArray.getColor(R.styleable.VerificationCodeInputBox_boxNormalColor, mNormalBgColor)
+    mPressBgColor =
+        typedArray.getColor(R.styleable.VerificationCodeInputBox_boxPressColor, mPressBgColor)
     mTextColor = typedArray.getColor(R.styleable.VerificationCodeInputBox_boxTextColor, mTextColor)
 
-    mTextSize = typedArray.getDimensionPixelSize(R.styleable.VerificationCodeInputBox_boxTextSize, mTextSize)
-    mLineWidth = typedArray.getDimensionPixelSize(R.styleable.VerificationCodeInputBox_boxLineWidth, mLineWidth)
-    mRoundRadius = typedArray.getDimensionPixelSize(R.styleable.VerificationCodeInputBox_boxRoundRadius, mRoundRadius)
-    mItemWidth = typedArray.getDimensionPixelSize(R.styleable.VerificationCodeInputBox_boxItemWidth, mItemWidth)
-    mSpaceWidth = typedArray.getDimensionPixelSize(R.styleable.VerificationCodeInputBox_boxSpaceWidth, mSpaceWidth)
+    mTextSize = typedArray.getDimensionPixelSize(
+      R.styleable.VerificationCodeInputBox_boxTextSize,
+      mTextSize
+    )
+    mLineWidth = typedArray.getDimensionPixelSize(
+      R.styleable.VerificationCodeInputBox_boxLineWidth,
+      mLineWidth
+    )
+    mRoundRadius = typedArray.getDimensionPixelSize(
+      R.styleable.VerificationCodeInputBox_boxRoundRadius,
+      mRoundRadius
+    )
+    mItemWidth = typedArray.getDimensionPixelSize(
+      R.styleable.VerificationCodeInputBox_boxItemWidth,
+      mItemWidth
+    )
+    mSpaceWidth = typedArray.getDimensionPixelSize(
+      R.styleable.VerificationCodeInputBox_boxSpaceWidth,
+      mSpaceWidth
+    )
 
     typedArray.recycle()
 
     initEditText()
-    calculateRawSize()
     initPaints()
   }
 
@@ -149,6 +162,7 @@ class VerificationCodeInputBox : AppCompatEditText {
     inputType = InputType.TYPE_CLASS_NUMBER
 
     isCursorVisible = false
+    isFocusableInTouchMode = true
 
     // 确保点击后，光标能在最后
     setOnClickListener { setSelection(text!!.length) }
@@ -174,13 +188,6 @@ class VerificationCodeInputBox : AppCompatEditText {
 
     // 防止阻止键盘收起
     setOnEditorActionListener { _, _, _ -> false }
-  }
-
-  /**
-   * 计算内容绘制区域的原始尺寸
-   */
-  private fun calculateRawSize() {
-    mRawWidth = mItemWidth * mBoxCount + mSpaceWidth * (mBoxCount - 1)
   }
 
   /**
@@ -226,15 +233,15 @@ class VerificationCodeInputBox : AppCompatEditText {
     var widthSize = View.MeasureSpec.getSize(widthMeasureSpec)
     var heightSize = View.MeasureSpec.getSize(heightMeasureSpec)
 
-    // 如果设置的宽高为 wrap_content,则可以完全绘制出符合要求的输入框，所以可以输出输入框的原始宽高
+    // 如果设置的宽高为 wrap_content，则可以完全绘制出符合要求的输入框，所以可以输出输入框的原始宽高
     if (widthMode == MeasureSpec.AT_MOST) {
-      widthSize = mRawWidth + paddingLeft + paddingRight
+      widthSize = (mItemWidth + mSpaceWidth) * mBoxCount - mSpaceWidth + paddingLeft + paddingRight
     }
     if (heightMode == MeasureSpec.AT_MOST) {
-      mRawHeight = mItemWidth
-      heightSize = mRawHeight + paddingTop + paddingBottom
-    } else if (heightMode == MeasureSpec.EXACTLY) {
-      mRawHeight = heightSize - paddingTop - paddingBottom
+      mItemHeight = mItemWidth
+      heightSize = mItemHeight + paddingTop + paddingBottom
+    } else {
+      mItemHeight = heightSize - paddingTop - paddingBottom
     }
     setMeasuredDimension(widthSize, heightSize)
   }
@@ -248,7 +255,7 @@ class VerificationCodeInputBox : AppCompatEditText {
     val realLeft = paddingLeft
     val realRight = width - paddingRight
     val realTop = paddingTop + mLineWidth / 2F
-    val realBottom = height - paddingBottom -  + mLineWidth / 2F
+    val realBottom = height - paddingBottom - mLineWidth / 2F
 
     // 根据显示的位置来确定左边距
     val gapWidth = realRight - realLeft - (mItemWidth + mSpaceWidth) * mBoxCount + mSpaceWidth
@@ -269,25 +276,33 @@ class VerificationCodeInputBox : AppCompatEditText {
           val left = leftWidth + realLeft + (mItemWidth + mSpaceWidth) * index.toFloat()
           val right = left + mItemWidth
           canvas?.drawLine(left, realBottom, right, realBottom, mPaint)
+          canvas?.drawText(
+            if (index < currentInputTextLen) mCurrentInputText[index].toString() else "",
+            left + (right - left) / 2F,
+            fontY,
+            mTextPaint
+          )
         }
         STYLE_SQUARE -> {
           val left = leftWidth + realLeft + (mItemWidth + mSpaceWidth) * index + mLineWidth / 2F
           val right = left + mItemWidth - mLineWidth
-          canvas?.drawRoundRect(left,
-              realTop,
-              right,
-              realBottom,
-              mRoundRadius.toFloat(),
-              mRoundRadius.toFloat(),
-              mPaint)
+          canvas?.drawRoundRect(
+            left,
+            realTop,
+            right,
+            realBottom,
+            mRoundRadius.toFloat(),
+            mRoundRadius.toFloat(),
+            mPaint
+          )
+          canvas?.drawText(
+            if (index < currentInputTextLen) mCurrentInputText[index].toString() else "",
+            left + (right - left) / 2F,
+            fontY,
+            mTextPaint
+          )
         }
       }
-
-      canvas?.drawText(
-          if (index < currentInputTextLen) mCurrentInputText[index].toString() else "",
-          left + (right - left) / 2F,
-          fontY,
-          mTextPaint)
     }
   }
 }
