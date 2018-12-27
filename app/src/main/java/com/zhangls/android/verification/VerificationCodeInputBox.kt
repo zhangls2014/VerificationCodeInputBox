@@ -164,6 +164,8 @@ class VerificationCodeInputBox : AppCompatEditText {
     isCursorVisible = false
     isFocusableInTouchMode = true
 
+    setPadding(paddingStart, 0, paddingEnd, 0)
+
     // 确保点击后，光标能在最后
     setOnClickListener { setSelection(text!!.length) }
     isLongClickable = false
