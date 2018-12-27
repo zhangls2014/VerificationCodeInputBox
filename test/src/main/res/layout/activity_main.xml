@@ -9,7 +9,7 @@
   <com.zhangls.android.verification.VerificationCodeInputBox
     android:id="@+id/inputBox"
     android:layout_width="wrap_content"
-    android:layout_height="60dp"
+    android:layout_height="wrap_content"
     app:boxCount="6"
     app:boxNormalColor="@color/colorPrimary"
     app:boxPressColor="@color/colorAccent"
